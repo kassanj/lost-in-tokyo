@@ -33,12 +33,66 @@ const Nav = () => (
   </nav>
 );
 
-const Attraction = ({title, description, image, className}) => (
-  <div className={className}>
-    <h1>{title}</h1>
-    <p>{description}</p>
-    {/* join our image file name onto the folder location */}
-    <img src={`../images/${image}`} />
+class Attraction extends React.Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      showInfo: false
+    };
+    // here we tell our toggleInfo about this by using bind
+    // otherwise setState will not work
+    this.toggleInfo = this.toggleInfo.bind(this)
+    this.closeInfo = this.closeInfo.bind(this)
+
+  }
+
+  toggleInfo() {
+    // running setState like this gives us the previousState and props
+    // it makes sure we don’t
+    this.setState((prevState, props) => ({
+      // doing this will turn true to false and vice versa
+      showInfo: !prevState.showInfo
+    }))
+  }
+
+  closeInfo() {
+    // run setState the regular way to close the overlay
+    this.setState({
+      showInfo: false,
+    })
+  }
+
+  render() {
+    const {title, description, className, image} = this.props
+    const {showInfo} = this.state
+    // DESTRUCTURING
+    // const title = this.props.title
+    // const description = this.props.description
+    return (
+      <div
+        className={`ph4 ph5-ns ph0-l mb4 mb5-ns w-100 overflow-hidden pointer attraction ${className}`}
+        onMouseEnter={this.toggleInfo}
+        onMouseLeave={this.closeInfo}
+      >
+        <div className="relative">
+          <Overlay {...this.props} {...this.state}/>
+          <img src={`../images/${image}`} className="db" />
+        </div>
+      </div>
+    )
+  }
+}
+
+const Overlay = ({showInfo, title, description}) => (
+  <div
+    className="absolute w-100 h-100 flex items-center pa3 pa4-ns bg-aqua overlay"
+    style={{transform: showInfo ? 'none' : 'translateY(-100%)' }}
+  >
+    <div>
+      <h1 className="f4 f3-ns mt0 mb2 regular black normal lh-title">{title}</h1>
+      <p className="lh-title lh-copy-ns mv0 black f6 measure-l">{description}</p>
+    </div>
   </div>
 );
 
